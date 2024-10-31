@@ -1,0 +1,25 @@
+pipeline {
+  agent any
+  stages {
+    stage('git scm update') {
+      steps {
+        git url: 'https://github.com/ekdms3868/jenkinstest.git', branch: 'main'
+      }
+    }
+    stage('docker build and push') {
+      steps {
+        sh '''
+        sudo docker build -t ekdms3868/keduit:purple .
+        sudo docker push ekdms3868/keduit:purple
+        '''
+      }
+    }
+    stage('deploy and service') {
+      steps {
+        sh '''
+        sudo kubectl apply -f /root/lab6/deploy_lb.yml
+        '''
+      }
+    }
+  }
+}
